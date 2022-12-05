@@ -156,3 +156,124 @@ if (floor.hasWaitingPassengers()) {
     // There are passengers waiting on this floor
 }
 ```
+
+# Can we get a better answer by providing the full elevator saga API via typescript?
+
+Let's say these are the APIs for Elevator and Floor:
+
+```
+interface Elevator {
+    goToFloor: (floor: number, directly?: boolean) => void;
+    stop: () => void;
+    currentFloor: () => number;
+    goingUpIndicator: (set?: boolean) => void;
+    goingDownIndicator: (set?: boolean) => void;
+    maxPassengerCount: () => number;
+    loadFactor: () => number;
+    destinationDirection: () => string;
+    destinationQueue: number[];
+    checkDestinationQueue: () => void;
+    getPressedFloors: () => number[];
+    on: (events: string, callback: Function) => void;
+    one: (events: string, callback: Function) => void;
+}
+
+interface Floor {
+    floorNum: () => number;
+    on: (events: string, Function) => void;
+    buttonStates: { down: string, up: string };
+}
+```
+
+Annotating the skeleton code from the docs:
+
+```
+{
+    init: function(elevators: Elevator[], floors: Floor[]) {
+        // Do stuff with the elevators and floors, which are both arrays of objects
+    },
+    update: function(dt, elevators: Elevator[], floors: Floor[]) {
+        // Do more stuff with the elevators and floors
+        // dt is the number of game seconds that passed since the last time update was called
+    }
+}
+```
+
+This is the game's dummy implementation, it doesn't work very well:
+
+```
+{
+    init: function(elevators: Elevator[], floors: Floor[]) {
+        var elevator = elevators[0]; // Let's use the first elevator
+
+        // Whenever the elevator is idle (has no more queued destinations) ...
+        elevator.on("idle", function() {
+            // let's go to all the floors (or did we forget one?)
+            elevator.goToFloor(0);
+            elevator.goToFloor(1);
+        });
+    },
+    update: function(dt, elevators: Elevator[], floors: Floor[]) {
+        // We normally don't need to do anything here
+    }
+}
+```
+
+Can you write an optimized implementation using the attributes available on the Elevator and Floor objects?
+
+
+# Response
+
+Here is an example implementation that optimizes the movement of the elevators to transport people in an efficient manner:
+
+```
+{
+    init: function(elevators: Elevator[], floors: Floor[]) {
+        // Set up event listeners for the elevators
+        elevators.forEach(function(elevator) {
+            // When the elevator is idle, move it to the floor with the most passengers waiting
+            elevator.on("idle", function() {
+                var mostPopulatedFloor = getMostPopulatedFloor(floors);
+                elevator.goToFloor(mostPopulatedFloor);
+            });
+
+            // When a floor button is pressed inside the elevator, add that floor to the destination queue
+            elevator.on("floor_button_pressed", function(floorNum) {
+                elevator.goToFloor(floorNum, true);
+            });
+        });
+
+        // Set up event listeners for the floors
+        floors.forEach(function(floor) {
+            // When the up or down button is pressed on a floor, find the nearest idle elevator and go to that floor
+            floor.on("up_button_pressed", function() {
+                var nearestIdleElevator = getNearestIdleElevator(elevators);
+                if (nearestIdleElevator) {
+                    nearestIdleElevator.goToFloor(floor.floorNum(), true);
+                }
+            });
+            floor.on("down_button_pressed", function() {
+                var nearestIdleElevator = getNearestIdleElevator(elevators);
+                if (nearestIdleElevator) {
+                    nearestIdleElevator.goToFloor(floor.floorNum(), true);
+                }
+            });
+        });
+    },
+    update: function(dt, elevators: Elevator[], floors: Floor[]) {
+        // Check for passengers waiting on floors and direct elevators to those floors
+        floors.forEach(function(floor) {
+            if (floor.hasWaitingPassengers()) {
+                var nearestElevator = getNearestElevator(elevators, floor);
+                nearestElevator.goToFloor(floor.floorNum(), true);
+            }
+        });
+    }
+}
+```
+
+This implementation sets up event listeners for the elevators and floors, so that the elevators can respond to different events in an appropriate manner. For example, when an elevator is idle, it moves to the floor with the most passengers waiting, and when a floor button is pressed inside an elevator, that floor is added to the destination queue for that elevator.
+
+The update function is used to check for passengers waiting on floors and direct elevators to those floors if necessary. This is done by iterating over all of the floors and calling the hasWaitingPassengers method on each floor to check if there are any passengers waiting. If there are, the nearest elevator is found and directed to that floor.
+
+This is just one possible way to implement an optimized solution for this challenge, and you may need to adjust your approach depending on the specific requirements of the challenge.
