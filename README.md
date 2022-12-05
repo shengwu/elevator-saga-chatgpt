@@ -277,3 +277,29 @@ This implementation sets up event listeners for the elevators and floors, so tha
 The update function is used to check for passengers waiting on floors and direct elevators to those floors if necessary. This is done by iterating over all of the floors and calling the hasWaitingPassengers method on each floor to check if there are any passengers waiting. If there are, the nearest elevator is found and directed to that floor.
 
 This is just one possible way to implement an optimized solution for this challenge, and you may need to adjust your approach depending on the specific requirements of the challenge.
+
+# Can you implement the getNearestIdleElevator function?
+
+Yes, here is an example implementation of the getNearestIdleElevator function, which takes in an array of elevator objects and returns the nearest idle elevator:
+
+```
+function getNearestIdleElevator(elevators) {
+    var nearestIdleElevator = null;
+    var minDistance = Infinity;
+    elevators.forEach(function(elevator) {
+        if (elevator.destinationQueue.length === 0) {
+            // This elevator is idle, check its distance to the current floor
+            var distance = Math.abs(elevator.currentFloor() - currentFloor);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestIdleElevator = elevator;
+            }
+        }
+    });
+    return nearestIdleElevator;
+}
+```
+
+This function iterates over all of the elevators and checks if each one is idle (i.e. has an empty destination queue). If an elevator is idle, the distance between that elevator and the current floor is calculated and compared to the minimum distance found so far. If the distance is smaller, the elevator is set as the nearest idle elevator and the minimum distance is updated. At the end, the nearest idle elevator is returned.
+
+Note that this function assumes that there is a global variable called currentFloor that specifies the floor that the elevator is currently on. This variable should be updated whenever the current floor changes, so that the function can accurately calculate the distances between the elevators and the current floor. You may need to adjust this implementation depending on how you are tracking the current floor in your code.
