@@ -8,6 +8,7 @@ Only the very best programs will be able to complete all the challenges.
 
 Your code must declare an object containing at least two functions called init and update. Like this:
 
+```
 {
     init: function(elevators, floors) {
         // Do stuff with the elevators and floors, which are both arrays of objects
@@ -17,6 +18,7 @@ Your code must declare an object containing at least two functions called init a
         // dt is the number of game seconds that passed since the last time update was called
     }
 }
+```
 
 These functions will then be called by the game during the challenge.
 init will be called when the challenge starts, and update repeatedly during the challenge.
@@ -27,11 +29,15 @@ Code examples
 
 How to control an elevator
 
+```
 elevator.goToFloor(1);
+```
 
 Tell the elevator to move to floor 1 after completing other tasks, if any. Note that this will have no effect if the elevator is already queued to go to that floor.
 
+```
 if(elevator.currentFloor() > 2) { ... }
+```
 
 Calling currentFloor gets the floor number that the elevator currently is on. Note that this is a rounded number and does not necessarily mean the elevator is in a stopped state.
 
@@ -39,15 +45,21 @@ Listening for events
 
 It is possible to listen for events, like when stopping at a floor, or a button has been pressed.
 
+```
 elevator.on("idle", function() { elevator.goToFloor(0); });
+```
 
 Listen for the "idle" event issued by the elevator, when the task queue has been emptied and the elevator is doing nothing. In this example we tell it to move to floor 0.
 
+```
 elevator.on("floor_button_pressed", function(floorNum) { ... } );
+```
 
 Listen for the "floor_button_pressed" event, issued when a passenger pressed a button inside the elevator. This indicates that the passenger wants to go to that floor.
 
+```
 floor.on("up_button_pressed", function() { ... } );
+```
 
 Listen for the "up_button_pressed" event, issued when a passenger pressed the up button on the floor they are waiting on. This indicates that the passenger wants to go to another floor.
 
