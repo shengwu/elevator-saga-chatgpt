@@ -10,6 +10,7 @@ Pros:
 - Backpacks typically have multiple compartments, which can make it easier to organize and access your belongings.
 - Backpacks often have padded straps and a padded back, which can make them more comfortable to wear than a tote bag.
 - Backpacks are often more secure than tote bags, as they can be zipped shut, making it more difficult for someone to steal your belongings.
+
 Cons:
 
 - A backpack can be less fashionable than a tote bag.
